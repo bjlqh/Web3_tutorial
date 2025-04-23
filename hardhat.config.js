@@ -7,6 +7,7 @@ require("@chainlink/env-enc").config();
 
 const SEPOLIA_URL = process.env.SEPOLIA_URL
 const PRIVATE_KEY = process.env.PRIVATE_KEY
+const ETHERSCAN_APIKEY = process.env.ETHERSCAN_APIKEY
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -17,5 +18,11 @@ module.exports = {
       url: SEPOLIA_URL,             //sepolia服务提供商:Alchemy, Infure, QuickNode
       accounts: [PRIVATE_KEY]       //metamask钱包私钥
     }
-  }
+  },
+  etherscan: {
+    apiKey: {
+      sepolia: ETHERSCAN_APIKEY     //etherscan.io apiKey
+    }
+  },
+
 };

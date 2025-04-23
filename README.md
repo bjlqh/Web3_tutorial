@@ -39,3 +39,21 @@ contract has been deployed successfully, contract address is + 0x6435D29f1A7785d
 
 
 4.12 hardhat verify
+https://hardhat.org/hardhat-runner/plugins/nomicfoundation-hardhat-verify
+
+在etherscan.io中设置apiKey
+
+在控制台执行:
+npx hardhat verify --network sepolia 0x6435D29f1A7785d20F207cB96b63c7C8B9cde7e6 "10"
+
+返回:
+Successfully submitted source code for contract
+contracts/FundMe.sol:FundMe at 0x6435D29f1A7785d20F207cB96b63c7C8B9cde7e6
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract FundMe on the block explorer.
+https://sepolia.etherscan.io/address/0x6435D29f1A7785d20F207cB96b63c7C8B9cde7e6#code
+
+什么时候部署在本地，什么时候部署在sepolia上面？
+如果部署在本地，就跳过合约验证逻辑。
+查看当前合约的chainId是什么 chainlist.org
