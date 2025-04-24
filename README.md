@@ -57,3 +57,90 @@ https://sepolia.etherscan.io/address/0x6435D29f1A7785d20F207cB96b63c7C8B9cde7e6#
 什么时候部署在本地，什么时候部署在sepolia上面？
 如果部署在本地，就跳过合约验证逻辑。
 查看当前合约的chainId是什么 chainlist.org
+sepolia chainid = 11155111
+
+
+
+4.13 小结
+
+4.14 合约交互脚本
+想要查看某个合约的函数，想要查看合约某个变量值
+// init 2 accounts
+// fund contract with first account
+// check balance of contract
+// fund contract with second account
+// check balance of contract
+// check mapping fundersToAmount
+
+npx hardhat run script/deployFundMe.js --network sepolia
+contract deploying
+contract has been deployed successfully, contract address is + 0xf896a1695D06aEbbd5B87E89CA543e9C698715F3
+waiting for 5 confirmations
+The contract 0xf896a1695D06aEbbd5B87E89CA543e9C698715F3 has already been verified on the block explorer. If you're trying to verify a partially verified contract, please use the --force flag.
+https://sepolia.etherscan.io/address/0xf896a1695D06aEbbd5B87E89CA543e9C698715F3#code
+
+Balance of the contract is 100000000000000000
+Balance of the contract is 200000000000000000
+Balance of first account 0x94e36d6D669b44701982838F54365936d9404217 is 100000000000000000
+Balance of second account 0x4Da27Cb8517Ddd24Fe8488Df937338E5136DA45e is 100000000000000000
+
+
+4.15 Hardhat Task
+在hardhat中，你做的所有事情都可以被定义为一个task
+
+>npx hardhat help
+
+AVAILABLE TASKS:
+
+  check                 Check whatever you need
+  clean                 Clears the cache and deletes all artifacts
+  compile               Compiles the entire project, building all artifacts
+  console               Opens a hardhat console
+  coverage              Generates a code coverage report for tests
+  flatten               Flattens and prints contracts and their dependencies. If no file is passed, all the contracts in the project will be flattened.
+  gas-reporter:merge 
+  help                  Prints this message
+  node                  Starts a JSON-RPC server on top of Hardhat Network
+  run                   Runs a user-defined script after compiling the project
+  test                  Runs mocha tests
+  typechain             Generate Typechain typings for compiled contracts
+  verify                Verifies a contract on Etherscan or Sourcify
+
+
+AVAILABLE TASK SCOPES:
+
+  ignition              Deploy your smart contracts using Hardhat Ignition
+  vars                  Manage your configuration variables
+
+To get help for a specific task run: npx hardhat help [SCOPE] <TASK>
+
+
+//这就是一个task最简单的结构
+const { task } = require("hardhat/config");
+
+task("deploy-fundme").setAction(async (taskArgs, hre) => { })
+
+module.exports = {}
+
+
+部署、验证：npx hardhat deploy-fundme --network sepolia
+交互：npx hardhat interact-fundme --network sepolia --addr [合约地址]
+
+4.16 总结
+1.安装nodejs
+先安装nvm，在通过nvm安装不同版本的nodejs
+
+2.安装vscode
+
+3.安装git
+
+4.创建harthat项目
+将合约写到hardhat中
+
+5.为了和合约交互，写了js脚本 deployFundMe
+
+6.部署不同的环境
+进行网络配置，敏感信息加密
+
+7.如何自定义task
+把脚本中的逻辑拆分成2个
