@@ -32,9 +32,9 @@ contract FundMe {
     //作为getFund函数成功被执行完以后的标记。
     bool public getFundSuccess = false;
 
-    constructor(uint256 _lockTime){
+    constructor(uint256 _lockTime, address dataFeedAddr){
         //Sepolia测试网
-        dataFeed = AggregatorV3Interface(0x694AA1769357215DE4FAC081bf1f309aDC325306);
+        dataFeed = AggregatorV3Interface(dataFeedAddr);
         //合约部署人
         owner = msg.sender;
 

@@ -8,6 +8,11 @@ stand-alone:本地独立运行的网络。提供JSON-RPC and WebSocket。
 这样就可以通过metamask给你本地的独立网络发送交易。
 只是单纯测试合约，那么就用in-process。如果要使用第三方合约，比如chainlink的合约，那么就可以把合约部署到以太坊sepolia上，而不去使用stand-alone独立测试网络
 
+导入hardhat框架
+
+require("@nomicfoundation/hardhat-toolbox");  完全是hardhat所用到的文件，大多数的配置信息都会添加到这个文件当中
+const { ethers } = require("hardhat");
+
 
 1:30:42 - 1:37:28
 
@@ -34,10 +39,16 @@ await hre.run("verify:verify", {
 在项目中安装 dotenv
 npm install --save-dev dotenv
 
-在hardhat.config.js中require("dotenv")
+在hardhat.config.js中
+导入
+require("dotenv")
 
 
 4.11 env-enc
+导入加密env-enc
+require("@chainlink/env-enc").config();
+
+
 对环境变量进行加密
 >npm install --save-dev @chainlink/env-enc
 >npx env-enc set-pw   输入密码：enc
@@ -96,6 +107,9 @@ Balance of second account 0x4Da27Cb8517Ddd24Fe8488Df937338E5136DA45e is 10000000
 
 4.15 Hardhat Task
 在hardhat中，你做的所有事情都可以被定义为一个task
+
+导入task
+const { task } = require("hardhat/config");
 
 >npx hardhat help
 
@@ -168,11 +182,19 @@ npm install hardhat[@版本] --save-dev(只有在开发环境中使用)
 # 第5课 hardhat 合约测试
 1.了解 mocha chai
 
+
+
 到test目录下，创建js测试脚本
+const { assert } = require("chai")
+
 it("测试描述", async function(){ })
 
 
 2.hardhat deploy插件
+导入hardhat-deploy
+require("hardhat-deploy")
+
+
 >npm install -D hardhat-deploy
 
 通过这种方式部署成功以后，那么就可以在test这个文件夹下用复用我们写的这个部署逻辑
@@ -180,3 +202,33 @@ it("测试描述", async function(){ })
     beforeEach(async function (params) {
         await deployments.fixture(["all"])
     })
+
+3.测试脚本
+fundme.test.js
+能够部署脚本，并且验证构造函数的sender, 验证喂价合约的地址
+>npx hardhat test
+
+
+4.mock合约
+
+https://ethereum.org/zh/developers/tutorials/how-to-mock-solidity-contracts-for-testing/
+对合约进行模拟，本质上是创建一个与该合约行为类似的副本，但开发者可以轻易控制这个副本。
+
+测试FundMe合约里更多的函数。
+获取ethUsdDataFeed预言机合约的价格，才能测试fund函数。
+利用mock创建一个假的DataFeed.
+
+在mock文件夹中引入这个合约
+/chainlink/contracts/src/v0.8/shared/mocks/MockV3Aggregator.sol
+
+在deploy文件夹下创建
+00-deploy-mock.js  用了创建部署mock合约，给出假的价格
+01-deploy-fund-me.js 部署fundme合约，再根据当前网络环境判断是否进行mock。
+如果是本地环境就使用mock合约提供价格，如果是sepolia则使用以太坊提供的价格。
+
+创建helper-hardhat-config.js
+将常量进行配置
+
+
+5.FundMe单元测试
+1:09:50
