@@ -19,6 +19,13 @@ npx hardhat run script/deployFundMe.js --network sepolia
 
 contract has been deployed successfully, contract address is + 0x17E82C1d1eE727BafE515917629aff04211B868a
 
+验证：
+Using programmatically
+await hre.run("verify:verify", {
+        address: fundMeAddr,
+        constructorArguments: args,
+    });
+
 
 4.10 env
 设置环境变量
@@ -134,13 +141,22 @@ module.exports = {}
 
 3.安装git
 
-4.创建harthat项目
+4.创建npm项目
+4.1安装nvm
+4.2安装nodejs
+4.3 npm install,npm init
+
+
+5.创建harthat项目
+npm install hardhat[@版本] --save-dev(只有在开发环境中使用)
 将合约写到hardhat中
 
-5.为了和合约交互，写了js脚本 deployFundMe
+npx hardhat
 
-6.部署不同的环境
+6.为了和合约交互，写了js脚本 deployFundMe
+
+7.部署不同的环境
 进行网络配置，敏感信息加密
 
-7.如何自定义task
+8.如何自定义task
 把脚本中的逻辑拆分成2个
