@@ -5,6 +5,7 @@ require("@nomicfoundation/hardhat-toolbox");
 //require("dotenv").config();        //package.json里面引入之后，在这里引入hardhat就可以用环境变量了
 require("@chainlink/env-enc").config();
 require("./tasks")
+require("hardhat-deploy")   //引入hardhat-deploy
 
 const SEPOLIA_URL = process.env.SEPOLIA_URL
 const PRIVATE_KEY = process.env.PRIVATE_KEY
@@ -27,5 +28,13 @@ module.exports = {
       sepolia: ETHERSCAN_APIKEY     //etherscan.io apiKey
     }
   },
+  namedAccounts: {
+    firstAccount: {
+      default: 0
+    },
+    secondAccount: {
+      default: 1
+    }
+  }
 
 };

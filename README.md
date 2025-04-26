@@ -1,4 +1,5 @@
-hardhat network  
+
+# 第4课 hardhat 开发合约
 It runs as either an in-process or stand-alone daemon, servicing JSON-RPC and WebSocket requests.
 
 in-process:只要发交易，网络就存在。不发交易就不存在。(暂时存在)
@@ -11,10 +12,10 @@ stand-alone:本地独立运行的网络。提供JSON-RPC and WebSocket。
 1:30:42 - 1:37:28
 
 合约编译：
-npx hardhat compile
+>npx hardhat compile
 
 合约部署：
-npx hardhat run script/deployFundMe.js --network sepolia
+>npx hardhat run script/deployFundMe.js --network sepolia
 
 
 contract has been deployed successfully, contract address is + 0x17E82C1d1eE727BafE515917629aff04211B868a
@@ -38,9 +39,9 @@ npm install --save-dev dotenv
 
 4.11 env-enc
 对环境变量进行加密
-npm install --save-dev @chainlink/env-enc
-npx env-enc set-pw   输入密码：enc
-npx env-enc set[变量名]
+>npm install --save-dev @chainlink/env-enc
+>npx env-enc set-pw   输入密码：enc
+>npx env-enc set[变量名]
 
 contract has been deployed successfully, contract address is + 0x6435D29f1A7785d20F207cB96b63c7C8B9cde7e6
 
@@ -51,7 +52,7 @@ https://hardhat.org/hardhat-runner/plugins/nomicfoundation-hardhat-verify
 在etherscan.io中设置apiKey
 
 在控制台执行:
-npx hardhat verify --network sepolia 0x6435D29f1A7785d20F207cB96b63c7C8B9cde7e6 "10"
+>npx hardhat verify --network sepolia 0x6435D29f1A7785d20F207cB96b63c7C8B9cde7e6 "10"
 
 返回:
 Successfully submitted source code for contract
@@ -72,14 +73,15 @@ sepolia chainid = 11155111
 
 4.14 合约交互脚本
 想要查看某个合约的函数，想要查看合约某个变量值
-// init 2 accounts
-// fund contract with first account
-// check balance of contract
-// fund contract with second account
-// check balance of contract
-// check mapping fundersToAmount
+init 2 accounts
+fund contract with first account
+check balance of contract
+fund contract with second account
+check balance of contract
+check mapping fundersToAmount
 
-npx hardhat run script/deployFundMe.js --network sepolia
+>npx hardhat run script/deployFundMe.js --network sepolia
+
 contract deploying
 contract has been deployed successfully, contract address is + 0xf896a1695D06aEbbd5B87E89CA543e9C698715F3
 waiting for 5 confirmations
@@ -130,8 +132,10 @@ task("deploy-fundme").setAction(async (taskArgs, hre) => { })
 module.exports = {}
 
 
-部署、验证：npx hardhat deploy-fundme --network sepolia
-交互：npx hardhat interact-fundme --network sepolia --addr [合约地址]
+部署、验证：
+>npx hardhat deploy-fundme --network sepolia
+交互：
+>npx hardhat interact-fundme --network sepolia --addr [合约地址]
 
 4.16 总结
 1.安装nodejs
@@ -151,7 +155,7 @@ module.exports = {}
 npm install hardhat[@版本] --save-dev(只有在开发环境中使用)
 将合约写到hardhat中
 
-npx hardhat
+>npx hardhat
 
 6.为了和合约交互，写了js脚本 deployFundMe
 
@@ -160,3 +164,19 @@ npx hardhat
 
 8.如何自定义task
 把脚本中的逻辑拆分成2个
+
+# 第5课 hardhat 合约测试
+1.了解 mocha chai
+
+到test目录下，创建js测试脚本
+it("测试描述", async function(){ })
+
+
+2.hardhat deploy插件
+>npm install -D hardhat-deploy
+
+通过这种方式部署成功以后，那么就可以在test这个文件夹下用复用我们写的这个部署逻辑
+    //在所有it之前执行
+    beforeEach(async function (params) {
+        await deployments.fixture(["all"])
+    })

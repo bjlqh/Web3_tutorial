@@ -13,7 +13,7 @@ contract FundMe {
 
     uint256 constant MINIMUM_VALUE = 100 * 10 ** 18; //wei 
 
-    AggregatorV3Interface internal dataFeed;    //合约内部调用
+    AggregatorV3Interface public dataFeed;    //合约内部调用
 
     uint256 constant TARGET = 1000 * 10 ** 18 ;  //常量
 
