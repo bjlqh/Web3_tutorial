@@ -229,6 +229,22 @@ https://ethereum.org/zh/developers/tutorials/how-to-mock-solidity-contracts-for-
 创建helper-hardhat-config.js
 将常量进行配置
 
+本地部署
+>npx hardhat deploy
+
+sepolia环境部署
+>npx hardhat deploy --network sepolia
+
+>npx hardhat deploy --network sepolia --reset
+
+--reset 的作用
+忽略部署缓存：
+默认情况下，Hardhat 会记录已执行的部署脚本（存储在 .deployments 目录中），下次部署时跳过已完成的脚本。
+
+添加 --reset 后，会清除这些记录，强制所有脚本重新运行。
+重新部署所有合约：
+即使合约代码未更改，也会重新部署到区块链，生成新的合约地址。
+适用于需要重置测试环境或验证部署流程完整性的场景。
 
 5.FundMe单元测试
 1:09:50
