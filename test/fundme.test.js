@@ -22,7 +22,7 @@ describe("test fundme contract", async function () {
 
         await fundMe.waitForDeployment()
         //assert.equal((await fundMe.owner()), firstAccount.address)
-        assert.equal((await fundMe.owner()), firstAccount.address)
+        assert.equal((await fundMe.owner()), firstAccount)
     })
 
     it("test if the dataFeed is assigned correctly", async function () {
