@@ -1,6 +1,6 @@
 const DECIMAL = 8
 const INITIAL_ANSWER = 300000000000
-const LOCK_TIME = 300
+const LOCK_TIME = 180
 const CONFIRMATIONS = 5
 const developmentChains = ["hardhat", "local"]
 const networkConfig = {

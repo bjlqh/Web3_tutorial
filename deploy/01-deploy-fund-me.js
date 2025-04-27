@@ -22,13 +22,16 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy } = deployments      //如果变量名和属性名一致，可以这样写
 
     let dataFeedAddr
+    let confirmations
     //判断当前网络环境
     if (developmentChains.includes(network.name)) {
         const mockV3Aggregator = await deployments.get("MockV3Aggregator")
         dataFeedAddr = mockV3Aggregator.address
+        confirmations = 0;
     } else {
         //不是mock的网络环境,就获取具体哪个链的地址
         dataFeedAddr = networkConfig[network.config.chainId].ethUsdDataFeed
+        confirmations = CONFIRMATIONS
     }
 
 
@@ -37,7 +40,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         from: firstAccount,
         args: [LOCK_TIME, dataFeedAddr],
         log: true,
-        waitConfirmations: CONFIRMATIONS
+        waitConfirmations: confirmations
     })
 
     //合约验证

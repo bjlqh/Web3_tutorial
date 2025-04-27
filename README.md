@@ -248,3 +248,9 @@ sepolia环境部署
 
 5.FundMe单元测试
 1:09:50
+引入工具
+const { assert, expect } = require("chai")
+const helpers = require("@nomicfoundation/hardhat-network-helpers")
+fundme.test.js
+
+1:33:39 getfund
