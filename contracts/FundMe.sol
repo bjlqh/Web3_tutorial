@@ -32,6 +32,11 @@ contract FundMe {
     //作为getFund函数成功被执行完以后的标记。
     bool public getFundSuccess = false;
 
+    event FundWithdrawByOwner(uint256);
+
+    event RefundByFunder(address, uint256);
+
+
     constructor(uint256 _lockTime, address dataFeedAddr){
         //Sepolia测试网
         dataFeed = AggregatorV3Interface(dataFeedAddr);
@@ -103,7 +108,9 @@ contract FundMe {
         //require(msg.sender == owner,"this function can only be called by owner");
         //require(block.timestamp >= deploymentTimestamp + lockTime,"window is not closed");
         //transfer
-        payable(msg.sender).transfer(address(this).balance); 
+
+        uint256 balance = address(this).balance;
+        payable(msg.sender).transfer(balance); 
 
         //send
         //bool success = payable(msg.sender).send(address(this).balance);
@@ -115,6 +122,9 @@ contract FundMe {
         //提完钱，将map当中的数据归零
         funderToAmount[msg.sender] = 0;
         getFundSuccess = true;
+
+        //emit event
+        emit FundWithdrawByOwner(balance);
     }
 
 
@@ -127,9 +137,12 @@ contract FundMe {
 
         //说明你有fund这个合约。那么就可以退款了
         bool succ;
-        (succ, ) = payable(msg.sender).call{value: address(this).balance}("");
+        uint256 balance = address(this).balance;
+        (succ, ) = payable(msg.sender).call{value: balance}("");
         require(succ, "transfer tx failed");
         funderToAmount[msg.sender] = 0;
+
+        emit RefundByFunder(msg.sender, balance);
     }
 
     modifier windowClosed() {

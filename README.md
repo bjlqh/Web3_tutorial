@@ -254,3 +254,20 @@ const helpers = require("@nomicfoundation/hardhat-network-helpers")
 fundme.test.js
 
 1:33:39 getfund
+
+引入hardhat-ethers
+>npm install --save-dev @nomicfoundation/hardhat-ethers ethers hardhat-deploy hardhat-deploy-ethers
+
+如果报版本冲突，那么就先卸载当前版本，再重装
+>npm uninstall hardhat-deploy hardhat-deploy-ethers
+
+require("@nomicfoundation/hardhat-ethers");
+require("hardhat-deploy");
+require("hardhat-deploy-ethers");
+
+emit event
+是用于 记录和通知区块链上特定动作或状态变化 的核心机制。
+
+定义事件：在合约顶部使用 event EventName(参数) 声明。
+触发事件：在函数逻辑中使用 emit EventName(参数)。
+监听验证：在前端监听或在测试中使用 .to.emit(合约名， EventName) 断言。
