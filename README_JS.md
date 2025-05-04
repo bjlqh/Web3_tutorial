@@ -1,5 +1,10 @@
 # JS知识
 
+## npm install
+npm install --save-dev	npm install -D	添加开发依赖 安装在devDependencies
+npm install --save	    npm install -S	添加生产依赖（默认行为）
+npm install --global	npm install -g	全局安装包
+
 ## js导入，什么时候需要加.config()，什么时候不加
 require("@chainlink/env-enc").config();
 require("./tasks/deploy-fundme");

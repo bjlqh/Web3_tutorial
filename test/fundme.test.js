@@ -1,8 +1,12 @@
 const { ethers, deployments, getNamedAccounts } = require("hardhat")
 const { assert, expect } = require("chai")
 const helpers = require("@nomicfoundation/hardhat-network-helpers")
+const { developmentChains } = require("../helper-hardhat-config")
 
-describe("test fundme contract", async function () {
+
+!developmentChains.includes(network.name) //当是本地网络的时候
+? describe.skip
+:describe("unit test fundme contract", async function () {
     let fundMe
     let fundMeSecondAccount
     let firstAccount
@@ -58,14 +62,14 @@ describe("test fundme contract", async function () {
             await helpers.mine()
 
             //value is greater minimum value
-            expect(fundMe.fund({ value: ethers.parseEther("0.1") }))
+            await expect(fundMe.fund({ value: ethers.parseEther("0.1") }))
                 .to.be.revertedWith("window is closed")
         }
     )
 
     it("window open ,value is less than minimum, fund failed", async function () {
         //value is greater minimum value
-        expect(fundMe.fund({ value: ethers.parseEther("0.01") }))
+        await expect(fundMe.fund({ value: ethers.parseEther("0.01") }))
             .to.be.revertedWith("Send more ETH")
     })
 
@@ -75,7 +79,7 @@ describe("test fundme contract", async function () {
             await fundMe.fund({ value: ethers.parseEther("0.1") })
             //如何验证这个测试执行成功呢？根据fund逻辑发现只需要检查funderToAmount里面的值有没有更新
             const balance = await fundMe.funderToAmount(firstAccount)
-            expect(balance).to.equal(ethers.parseEther("0.1"))
+            await expect(balance).to.equal(ethers.parseEther("0.1"))
         }
     )
 
@@ -93,7 +97,7 @@ describe("test fundme contract", async function () {
             await helpers.mine()
 
             //secondAccount getFund
-            expect(fundMeSecondAccount.getFund())
+            await expect(fundMeSecondAccount.getFund())
                 .to.be.revertedWith("this function can only be called by owner")
         })
 
@@ -111,7 +115,7 @@ describe("test fundme contract", async function () {
         await helpers.time.increase(200)
         await helpers.mine()
 
-        expect(fundMe.getFund())
+        await expect(fundMe.getFund())
             .to.be.revertedWith("Target is not reached")
     })
 
@@ -121,7 +125,7 @@ describe("test fundme contract", async function () {
 
         await helpers.time.increase(200)
         await helpers.mine()
-        expect(fundMe.getFund())
+        await expect(fundMe.getFund())
             .to.be.revertedWith("Target is not reached")
     })
 
@@ -135,7 +139,7 @@ describe("test fundme contract", async function () {
         await helpers.time.increase(200)
         await helpers.mine()
 
-        expect(fundMe.getFund())
+        await expect(fundMe.getFund())
             .to.emit(fundMe, "FundWithdrawByOwner")
             .withArgs(ethers.parseEther("1"))
     })
@@ -146,7 +150,7 @@ describe("test fundme contract", async function () {
     it("window open, target not reached, funder has balance", async function () {
         await fundMe.fund({ value: ethers.parseEther("0.1") })
         
-        expect(fundMe.refund())
+        await expect(fundMe.refund())
             .to.be.revertedWith("window is not closed")
     })
 
@@ -156,7 +160,7 @@ describe("test fundme contract", async function () {
         await helpers.time.increase(200)
         await helpers.mine()
         
-        expect(fundMe.refund())
+        await expect(fundMe.refund())
             .to.be.revertedWith("Target is reached")
     })
 
@@ -166,7 +170,7 @@ describe("test fundme contract", async function () {
         await helpers.time.increase(200)
         await helpers.mine()
         
-        expect(fundMeSecondAccount.refund())
+        await expect(fundMeSecondAccount.refund())
             .to.be.revertedWith("there is no fund for you")
     })
 
@@ -177,7 +181,7 @@ describe("test fundme contract", async function () {
         await helpers.time.increase(200)
         await helpers.mine()
         
-        expect(fundMe.refund())
+        await expect(fundMe.refund())
             .to.emit(fundMe, "RefundByFunder")
             .withArgs(firstAccount, ethers.parseEther("0.1"))
     })

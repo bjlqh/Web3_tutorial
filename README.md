@@ -9,9 +9,10 @@ stand-alone:本地独立运行的网络。提供JSON-RPC and WebSocket。
 只是单纯测试合约，那么就用in-process。如果要使用第三方合约，比如chainlink的合约，那么就可以把合约部署到以太坊sepolia上，而不去使用stand-alone独立测试网络
 
 导入hardhat框架
-
+```
 require("@nomicfoundation/hardhat-toolbox");  完全是hardhat所用到的文件，大多数的配置信息都会添加到这个文件当中
 const { ethers } = require("hardhat");
+```
 
 
 1:30:42 - 1:37:28
@@ -27,17 +28,18 @@ contract has been deployed successfully, contract address is + 0x17E82C1d1eE727B
 
 验证：
 Using programmatically
+```
 await hre.run("verify:verify", {
         address: fundMeAddr,
         constructorArguments: args,
     });
-
+```
 
 4.10 env
 设置环境变量
 
 在项目中安装 dotenv
-npm install --save-dev dotenv
+>npm install --save-dev dotenv
 
 在hardhat.config.js中
 导入
@@ -109,7 +111,9 @@ Balance of second account 0x4Da27Cb8517Ddd24Fe8488Df937338E5136DA45e is 10000000
 在hardhat中，你做的所有事情都可以被定义为一个task
 
 导入task
+```
 const { task } = require("hardhat/config");
+```
 
 >npx hardhat help
 
@@ -139,12 +143,13 @@ To get help for a specific task run: npx hardhat help [SCOPE] <TASK>
 
 
 //这就是一个task最简单的结构
+```
 const { task } = require("hardhat/config");
 
 task("deploy-fundme").setAction(async (taskArgs, hre) => { })
 
 module.exports = {}
-
+```
 
 部署、验证：
 >npx hardhat deploy-fundme --network sepolia
@@ -197,11 +202,47 @@ require("hardhat-deploy")
 
 >npm install -D hardhat-deploy
 
-通过这种方式部署成功以后，那么就可以在test这个文件夹下用复用我们写的这个部署逻辑
-    //在所有it之前执行
-    beforeEach(async function (params) {
-        await deployments.fixture(["all"])
-    })
+在 Hardhat 的单元测试中，describe 是 Mocha 测试框架 提供的核心函数，用于 组织和分组测试用例。
+describe 的作用
+结构化测试：将多个相关测试用例（it 块）分组，提升代码可读性。
+逻辑分层：支持嵌套使用，模拟模块化测试（如按合约、按函数分组）。
+钩子函数：可在 describe 块内使用 beforeEach、afterEach 等钩子，统一管理测试前置/后置操作。
+```
+const { expect } = require("chai");
+const { ethers } = require("hardhat");
+
+// 外层 describe：测试 FundMe 合约
+describe("FundMe 合约测试", function () {
+  let fundMe;
+  let owner, user;
+
+  // 钩子函数：在每个测试用例前部署合约
+  beforeEach(async function () {
+    const FundMe = await ethers.getContractFactory("FundMe");
+    fundMe = await FundMe.deploy();
+    [owner, user] = await ethers.getSigners();
+  });
+
+  // 测试组 1：存款功能
+  describe("存款功能", function () {
+    it("应允许用户存款并更新余额", async function () {
+      await fundMe.connect(user).deposit({ value: 100 });
+      expect(await fundMe.getBalance(user.address)).to.equal(100);
+    });
+
+    it("存款金额为 0 时应回滚", async function () {
+      await expect(fundMe.deposit({ value: 0 })).to.be.revertedWith("金额必须大于 0");
+    });
+  });
+
+  // 测试组 2：取款功能
+  describe("取款功能", function () {
+    it("仅所有者可以取款", async function () {
+      await expect(fundMe.connect(user).withdraw()).to.be.revertedWith("非所有者");
+    });
+  });
+});
+```
 
 3.测试脚本
 fundme.test.js
@@ -248,10 +289,12 @@ sepolia环境部署
 
 5.FundMe单元测试
 1:09:50
+fundme.test.js
 引入工具
+```
 const { assert, expect } = require("chai")
 const helpers = require("@nomicfoundation/hardhat-network-helpers")
-fundme.test.js
+```
 
 1:33:39 getfund
 
@@ -271,3 +314,39 @@ emit event
 定义事件：在合约顶部使用 event EventName(参数) 声明。
 触发事件：在函数逻辑中使用 emit EventName(参数)。
 监听验证：在前端监听或在测试中使用 .to.emit(合约名， EventName) 断言。
+
+6.FundMe 集成测试
+比如说集成真实环境中的喂价合约。
+
+使用promise来模拟等待的时间
+make sure we can get receipt！
+```
+const getFundTx = await fundMe.getFund()
+const getFundReceipt = await getFundTx.wait()
+```
+
+developmentChains.includes(network.name) ? 单元测试:集成测试
+
+unit test:
+!developmentChains.includes(network.name) ? describe.skip : 单元测试代码
+
+staging test:
+developmentChains.includes(network.name) ? describe.skip : 集成测试代码
+
+当执行npx hardhat test --network sepolia时就可以根据配置要求去执行相应的代码
+
+7.gas-reporter 和 solidity-coverage
+安装
+>npm install -D hardhat-gas-reporter
+执行
+>npx hardhat test
+
+gas-reporter: 测试每一个函数都消耗多少gas
+**特别注意：如果没有在测试函数前加await的话，是不会打印该函数的gas。
+
+
+solidity-coverage: 已有的测试它覆盖了多少代码
+hardhat已经帮我预装好了，不需要安装
+
+执行
+>npx hardhat coverage
